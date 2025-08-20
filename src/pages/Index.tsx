@@ -1,75 +1,66 @@
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { IssueForm } from "@/components/IssueForm";
-import { IssueCard } from "@/components/IssueCard";
+import { IssueCard, type Issue } from "@/components/IssueCard";
 import { StatsOverview } from "@/components/StatsOverview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIssues } from "@/hooks/useIssues";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+
+// Sample data for demonstration
+const sampleIssues: Issue[] = [
+  {
+    id: "1",
+    title: "Broken washing machine in laundry room",
+    description: "The washing machine in the ground floor laundry room is not working. It stops mid-cycle and displays error code E3.",
+    category: "Maintenance",
+    priority: "high",
+    status: "pending",
+    submittedBy: "Sarah Chen",
+    submittedAt: new Date("2024-01-15"),
+    unit: "A3"
+  },
+  {
+    id: "2", 
+    title: "WiFi connection issues in common area",
+    description: "The WiFi in the main common area keeps disconnecting. Multiple residents have reported this issue.",
+    category: "Utilities",
+    priority: "medium",
+    status: "in-progress",
+    submittedBy: "Mike Johnson",
+    submittedAt: new Date("2024-01-14"),
+    unit: "B1"
+  },
+  {
+    id: "3",
+    title: "Kitchen refrigerator temperature too warm",
+    description: "The shared kitchen refrigerator is not keeping food cold enough. Temperature seems to be around 50°F instead of the usual 37°F.",
+    category: "Maintenance",
+    priority: "medium",
+    status: "resolved",
+    submittedBy: "Emily Rodriguez",
+    submittedAt: new Date("2024-01-12"),
+    unit: "A1"
+  }
+];
 
 const Index = () => {
-  const { 
-    issues, 
-    loading, 
-    error, 
-    createIssue, 
-    filterIssuesByStatus, 
-    fetchIssues 
-  } = useIssues();
+  const [issues, setIssues] = useState<Issue[]>(sampleIssues);
 
-  const handleNewIssue = async (newIssue: Parameters<typeof createIssue>[0]) => {
-    await createIssue(newIssue);
+  const handleNewIssue = (newIssue: Omit<Issue, "id" | "submittedAt" | "status">) => {
+    const issue: Issue = {
+      ...newIssue,
+      id: Date.now().toString(),
+      submittedAt: new Date(),
+      status: "pending"
+    };
+    setIssues([issue, ...issues]);
+  };
+
+  const filterIssuesByStatus = (status?: string) => {
+    if (!status || status === "all") return issues;
+    return issues.filter(issue => issue.status === status);
   };
 
   const pendingCount = issues.filter(issue => issue.status === "pending").length;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header pendingCount={0} />
-        <main className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-4 w-20 mb-2" />
-                  <Skeleton className="h-8 w-12" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <Skeleton className="h-32 w-full mb-6" />
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-32 w-full" />
-            ))}
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header pendingCount={0} />
-        <main className="container mx-auto px-4 py-6">
-          <Card className="p-6">
-            <CardContent className="flex flex-col items-center gap-4">
-              <AlertCircle className="h-12 w-12 text-destructive" />
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Failed to Load Issues</h3>
-                <p className="text-muted-foreground mb-4">{error}</p>
-                <Button onClick={fetchIssues}>Try Again</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,7 +104,7 @@ const Index = () => {
           </TabsContent>
         </Tabs>
         
-        {!loading && issues.length === 0 && (
+        {issues.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No issues reported yet. Use the form above to report your first issue.</p>
           </div>
