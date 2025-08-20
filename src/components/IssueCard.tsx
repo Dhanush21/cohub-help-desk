@@ -2,18 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, AlertTriangle, CheckCircle, Clock } from "lucide-react";
-
-export type Issue = {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  priority: "low" | "medium" | "high";
-  status: "pending" | "in-progress" | "resolved";
-  submittedBy: string;
-  submittedAt: Date;
-  unit?: string;
-};
+import { type Issue } from "@/hooks/useIssues";
 
 interface IssueCardProps {
   issue: Issue;
@@ -61,11 +50,11 @@ export const IssueCard = ({ issue }: IssueCardProps) => {
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
-            {issue.submittedBy}
+            {issue.submitted_by}
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {issue.submittedAt.toLocaleDateString()}
+            {new Date(issue.created_at).toLocaleDateString()}
           </div>
           {issue.unit && <span>Unit {issue.unit}</span>}
         </div>

@@ -1,58 +1,15 @@
-import { useState } from "react";
 import { Header } from "@/components/Header";
 import { IssueForm } from "@/components/IssueForm";
-import { IssueCard, type Issue } from "@/components/IssueCard";
+import { IssueCard } from "@/components/IssueCard";
 import { StatsOverview } from "@/components/StatsOverview";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Sample data for demonstration
-const sampleIssues: Issue[] = [
-  {
-    id: "1",
-    title: "Broken washing machine in laundry room",
-    description: "The washing machine in the ground floor laundry room is not working. It stops mid-cycle and displays error code E3.",
-    category: "Maintenance",
-    priority: "high",
-    status: "pending",
-    submittedBy: "Sarah Chen",
-    submittedAt: new Date("2024-01-15"),
-    unit: "A3"
-  },
-  {
-    id: "2", 
-    title: "WiFi connection issues in common area",
-    description: "The WiFi in the main common area keeps disconnecting. Multiple residents have reported this issue.",
-    category: "Utilities",
-    priority: "medium",
-    status: "in-progress",
-    submittedBy: "Mike Johnson",
-    submittedAt: new Date("2024-01-14"),
-    unit: "B1"
-  },
-  {
-    id: "3",
-    title: "Kitchen refrigerator temperature too warm",
-    description: "The shared kitchen refrigerator is not keeping food cold enough. Temperature seems to be around 50°F instead of the usual 37°F.",
-    category: "Maintenance",
-    priority: "medium",
-    status: "resolved",
-    submittedBy: "Emily Rodriguez",
-    submittedAt: new Date("2024-01-12"),
-    unit: "A1"
-  }
-];
+import { useIssues, type NewIssue } from "@/hooks/useIssues";
 
 const Index = () => {
-  const [issues, setIssues] = useState<Issue[]>(sampleIssues);
+  const { issues, loading, error, createIssue } = useIssues();
 
-  const handleNewIssue = (newIssue: Omit<Issue, "id" | "submittedAt" | "status">) => {
-    const issue: Issue = {
-      ...newIssue,
-      id: Date.now().toString(),
-      submittedAt: new Date(),
-      status: "pending"
-    };
-    setIssues([issue, ...issues]);
+  const handleNewIssue = async (newIssue: NewIssue) => {
+    await createIssue(newIssue);
   };
 
   const filterIssuesByStatus = (status?: string) => {
@@ -61,6 +18,32 @@ const Index = () => {
   };
 
   const pendingCount = issues.filter(issue => issue.status === "pending").length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header pendingCount={0} />
+        <main className="container mx-auto px-4 py-6">
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading issues...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header pendingCount={0} />
+        <main className="container mx-auto px-4 py-6">
+          <div className="text-center py-12">
+            <p className="text-destructive">Error loading issues: {error}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,7 +87,7 @@ const Index = () => {
           </TabsContent>
         </Tabs>
         
-        {issues.length === 0 && (
+        {issues.length === 0 && !loading && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No issues reported yet. Use the form above to report your first issue.</p>
           </div>

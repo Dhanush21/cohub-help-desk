@@ -7,10 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { PlusCircle } from "lucide-react";
-import type { Issue } from "./IssueCard";
+import { type NewIssue } from "@/hooks/useIssues";
 
 interface IssueFormProps {
-  onSubmit: (issue: Omit<Issue, "id" | "submittedAt" | "status">) => void;
+  onSubmit: (issue: NewIssue) => Promise<void>;
 }
 
 const categories = [
@@ -30,15 +30,15 @@ export const IssueForm = ({ onSubmit }: IssueFormProps) => {
     description: "",
     category: "",
     priority: "medium" as "low" | "medium" | "high",
-    submittedBy: "",
+    submitted_by: "",
     unit: ""
   });
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.description || !formData.category || !formData.submittedBy) {
+    if (!formData.title || !formData.description || !formData.category || !formData.submitted_by) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -47,21 +47,21 @@ export const IssueForm = ({ onSubmit }: IssueFormProps) => {
       return;
     }
 
-    onSubmit(formData);
-    setFormData({
-      title: "",
-      description: "",
-      category: "",
-      priority: "medium",
-      submittedBy: "",
-      unit: ""
-    });
-    setIsOpen(false);
-    
-    toast({
-      title: "Issue Reported",
-      description: "Your issue has been submitted successfully.",
-    });
+    try {
+      await onSubmit(formData);
+      
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        priority: "medium",
+        submitted_by: "",
+        unit: ""
+      });
+      setIsOpen(false);
+    } catch (error) {
+      // Error is already handled in the hook
+    }
   };
 
   if (!isOpen) {
@@ -114,11 +114,11 @@ export const IssueForm = ({ onSubmit }: IssueFormProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="submittedBy">Your Name *</Label>
+              <Label htmlFor="submitted_by">Your Name *</Label>
               <Input
-                id="submittedBy"
-                value={formData.submittedBy}
-                onChange={(e) => setFormData({ ...formData, submittedBy: e.target.value })}
+                id="submitted_by"
+                value={formData.submitted_by}
+                onChange={(e) => setFormData({ ...formData, submitted_by: e.target.value })}
                 placeholder="John Doe"
                 required
               />

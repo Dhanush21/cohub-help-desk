@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, CheckCircle, Clock, TrendingUp } from "lucide-react";
-import type { Issue } from "./IssueCard";
+import { type Issue } from "@/hooks/useIssues";
 
 interface StatsOverviewProps {
   issues: Issue[];
