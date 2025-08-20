@@ -14,313 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
-      buildings: {
-        Row: {
-          address: string
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          total_units: number
-          updated_at: string
-        }
-        Insert: {
-          address: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          total_units?: number
-          updated_at?: string
-        }
-        Update: {
-          address?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          total_units?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      issue_categories: {
-        Row: {
-          color: string | null
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          color?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-        }
-        Update: {
-          color?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
-      issue_comments: {
-        Row: {
-          comment: string
-          created_at: string
-          id: string
-          issue_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          comment: string
-          created_at?: string
-          id?: string
-          issue_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          comment?: string
-          created_at?: string
-          id?: string
-          issue_id?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "issue_comments_issue_id_fkey"
-            columns: ["issue_id"]
-            isOneToOne: false
-            referencedRelation: "issues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issue_comments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       issues: {
         Row: {
-          assigned_to: string | null
-          building_id: string | null
-          category_id: string | null
+          category: string
           created_at: string
           description: string
           id: string
-          priority: Database["public"]["Enums"]["issue_priority"]
-          resolved_at: string | null
-          status: Database["public"]["Enums"]["issue_status"]
-          submitted_by: string | null
+          priority: string
+          status: string
+          submitted_by: string
           title: string
-          unit_id: string | null
+          unit: string | null
           updated_at: string
         }
         Insert: {
-          assigned_to?: string | null
-          building_id?: string | null
-          category_id?: string | null
+          category: string
           created_at?: string
           description: string
           id?: string
-          priority?: Database["public"]["Enums"]["issue_priority"]
-          resolved_at?: string | null
-          status?: Database["public"]["Enums"]["issue_status"]
-          submitted_by?: string | null
+          priority: string
+          status?: string
+          submitted_by: string
           title: string
-          unit_id?: string | null
+          unit?: string | null
           updated_at?: string
         }
         Update: {
-          assigned_to?: string | null
-          building_id?: string | null
-          category_id?: string | null
+          category?: string
           created_at?: string
           description?: string
           id?: string
-          priority?: Database["public"]["Enums"]["issue_priority"]
-          resolved_at?: string | null
-          status?: Database["public"]["Enums"]["issue_status"]
-          submitted_by?: string | null
+          priority?: string
+          status?: string
+          submitted_by?: string
           title?: string
-          unit_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "issues_assigned_to_fkey"
-            columns: ["assigned_to"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_building_id_fkey"
-            columns: ["building_id"]
-            isOneToOne: false
-            referencedRelation: "buildings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "issue_categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_submitted_by_fkey"
-            columns: ["submitted_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "issues_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "units"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          phone: string | null
-          role: Database["public"]["Enums"]["user_role"]
-          updated_at: string
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          email: string
-          full_name: string
-          id: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          email?: string
-          full_name?: string
-          id?: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
+          unit?: string | null
           updated_at?: string
         }
         Relationships: []
-      }
-      residents: {
-        Row: {
-          created_at: string
-          emergency_contact_name: string | null
-          emergency_contact_phone: string | null
-          id: string
-          is_primary_tenant: boolean | null
-          lease_end_date: string | null
-          lease_start_date: string | null
-          unit_id: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          emergency_contact_name?: string | null
-          emergency_contact_phone?: string | null
-          id?: string
-          is_primary_tenant?: boolean | null
-          lease_end_date?: string | null
-          lease_start_date?: string | null
-          unit_id?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          emergency_contact_name?: string | null
-          emergency_contact_phone?: string | null
-          id?: string
-          is_primary_tenant?: boolean | null
-          lease_end_date?: string | null
-          lease_start_date?: string | null
-          unit_id?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "residents_unit_id_fkey"
-            columns: ["unit_id"]
-            isOneToOne: false
-            referencedRelation: "units"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "residents_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      units: {
-        Row: {
-          building_id: string | null
-          created_at: string
-          floor: number | null
-          id: string
-          is_occupied: boolean | null
-          max_occupants: number | null
-          monthly_rent: number | null
-          unit_number: string
-          updated_at: string
-        }
-        Insert: {
-          building_id?: string | null
-          created_at?: string
-          floor?: number | null
-          id?: string
-          is_occupied?: boolean | null
-          max_occupants?: number | null
-          monthly_rent?: number | null
-          unit_number: string
-          updated_at?: string
-        }
-        Update: {
-          building_id?: string | null
-          created_at?: string
-          floor?: number | null
-          id?: string
-          is_occupied?: boolean | null
-          max_occupants?: number | null
-          monthly_rent?: number | null
-          unit_number?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "units_building_id_fkey"
-            columns: ["building_id"]
-            isOneToOne: false
-            referencedRelation: "buildings"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {
@@ -330,9 +61,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      issue_priority: "low" | "medium" | "high"
-      issue_status: "pending" | "in-progress" | "resolved"
-      user_role: "resident" | "manager" | "maintenance"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -459,10 +188,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      issue_priority: ["low", "medium", "high"],
-      issue_status: ["pending", "in-progress", "resolved"],
-      user_role: ["resident", "manager", "maintenance"],
-    },
+    Enums: {},
   },
 } as const
